@@ -1,0 +1,5 @@
+{
+	"https":true,
+	"host":"my.subdomain.com",
+	"app_key":"YouKey"
+}
