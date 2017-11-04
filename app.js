@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 global.DB = require('./db/db');
 global.Config = require('./config.json');
 
