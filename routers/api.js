@@ -35,6 +35,16 @@ api.post('/pixels/new', function(req, res, next){
 	return res.json(p);
 });
 
+api.post('/webhook', function(req, res, next){
+	if(!req.body.url){
+		let e = new Error('URL required');
+		e.code = 400;
+		throw e;
+	}
+	DB.Webhooks.add(req.body.url);
+	return res.json({success:true});
+});
+
 
 // ******* DATA ACQUISITION ********
 api.get('/campaigns', function(req, res, next){

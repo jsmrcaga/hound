@@ -37,6 +37,23 @@ app.get('/', function (req, res, err){
 app.use('/tracker', require('./routers/tracker'));
 app.use('/api', require('./routers/api'));
 
+process.on('uncaughtException', function(err){
+	console.log('UNCAUGHT', err);
+	DB.save(function(){
+		process.exit(1);
+	});
+});
+
+process.on('SIGINT', function(){
+	console.log('Gracefully killing...');
+	console.log('Saving db...');
+	DB.save(function(){
+		console.log('Killing');
+		process.exit();
+	});
+});
+
+
 app.listen(process.env.PORT || 1234, function(){
 	console.log(`Server listening on port ${process.env.PORT || 1234}!`);
 });

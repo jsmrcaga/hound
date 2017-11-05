@@ -1,10 +1,12 @@
 const fs = require('fs');
+const URL = require('url');
 
 let db = {};
 db.Models = require('./models/models');
 let objects = {
 	Campaigns:[],
-	Pixels:[]
+	Pixels:[],
+	Webhooks:[]
 };
 
 db.load = function(){
@@ -32,7 +34,7 @@ db.load = function(){
 	console.log('DB loaded!');
 };
 
-db.save = function(){
+db.save = function(callback){
 	if(db.save.__locked){
 		db.save.__queued = true;
 		return;
@@ -45,9 +47,31 @@ db.save = function(){
 		db.save.__locked = false;
 		if(db.save.__queued){
 			db.save.__queued = false;
-			return db.save();
+			db.save();
+		}
+
+		if(callback && callback instanceof Function){
+			callback();
 		}
 	});
+};
+
+db.Webhooks = {};
+db.Webhooks.add = function(url){
+	let params = URL.parse(url);
+	params.https = params.protocol === 'https:' ? true : false;
+	params.host = params.hostname;
+	delete params.hostname;
+	delete params.href;
+	delete params.pathname;
+	delete params.protocol;
+	delete params.slashes;
+	delete params.auth;
+	objects.Webhooks.push(params);
+};
+
+db.Webhooks.all = function(){
+	return objects.Webhooks;
 };
 
 db.Campaigns = {};
