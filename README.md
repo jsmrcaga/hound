@@ -1,6 +1,18 @@
 # Hound
 ## A (very) simple tracking server
 
+### `tl;dr`
+Hound tracks clicks of links and gives also tracking pixels. 
+Hound can be installed and run directly after handling config.json
+
+#### Installation
+`npm install -g houndtrack`
+You then just need to set up the `config.json` file in the installation directory.
+
+`hound` will launch hound.
+
+### Hound ?
+
 #### What is Hound ? 
 Hound is a mini tracking server, capable of handling some analytics (think Google Analytics) and to some extent, tracking pixels.
 
@@ -170,7 +182,7 @@ Analytics are pre-treated objects like so:
             },
             "sources": {
                 "HubSpot": 5,
-                "myass": 3
+                "AnotherSource": 3
             },
             "mediums": {
                 "(N/A)": 8
