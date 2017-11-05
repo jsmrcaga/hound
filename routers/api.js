@@ -1,5 +1,6 @@
 const join = require('path').join;
 const Analytics = require(join(__dirname, '../lib/analytics'));
+const Shortener = require(join(__dirname, '../lib/shortener'));
 
 let api = require('express').Router();
 
@@ -15,12 +16,6 @@ api.use('/', function(req, res, next){
 
 	return next();
 });
-
-api.use(function(err, req, res, next){
-	console.error(err);
-	return res.status(err.code || 500).json({error:{message:err.message, code:err.code || 500}});
-});
-
 
 // ******* CREATION ********
 api.post('/campaigns/new', function(req, res, next){
@@ -94,9 +89,15 @@ api.get('/campaigns/:id', function(req, res, next){
 		throw e;
 	}
 
-	return res.json({
-		uri: (Config.https ? 'https://' : 'http://') + Config.host + `/tracker/${campaign.id}?` + campaign.makeuri(req.query.referrer, req.query.source, req.query.medium, req.query.extra, req.query.redir_fallback)
-	});
+	let uri = (Config.https ? 'https://' : 'http://') + Config.host + `/tracker/${campaign.id}?` + campaign.makeuri(req.query.referrer, req.query.source, req.query.medium, req.query.extra, req.query.redir_fallback);
+
+	if(req.query.shorten){
+		return shorten(uri, req, res);
+	} else {
+		return res.json({
+			uri: uri
+		});
+	}
 });
 
 api.get('/pixels/:id', function(req, res, next){
@@ -114,8 +115,34 @@ api.get('/pixels/:id', function(req, res, next){
 		throw e;
 	}
 	
-	return res.json({
-		uri: (Config.https ? 'https://' : 'http://') + Config.host + `/tracker/pixel/${pixel.id}?` + campaign.makeuri(req.query.referrer, req.query.source, req.query.medium, req.query.extra, req.query.redir_fallback)
-	});
+	let uri = (Config.https ? 'https://' : 'http://') + Config.host + `/tracker/pixel/${pixel.id}?` + campaign.makeuri(req.query.referrer, req.query.source, req.query.medium, req.query.extra, req.query.redir_fallback);
+
+	if(req.query.shorten){
+		return shorten(uri, req, res);
+	} else {
+		return res.json({
+			uri: uri
+		});
+	}
 });
+
+api.use(function(err, req, res, next){
+	console.error(err);
+	return res.status(err.code || 500).json({error:{message:err.message, code:err.code || 500}});
+});
+
+function shorten(uri, req, res){
+	Shortener.bitly(uri).then(shortlink => {
+		return res.json({
+			uri: uri,
+			short: shortlink
+		});
+	}).catch(e => {
+		return res.json({
+			uri: uri,
+			short: null,
+			error: e
+		});
+	});
+}
 module.exports = api;

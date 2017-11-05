@@ -3,7 +3,7 @@
 
 ### `tl;dr`
 Hound tracks clicks of links and gives also tracking pixels. 
-Hound can be installed and run directly after handling config.json
+Hound can be installed and run directly after handling [config.json](https://stackoverflow.com/questions/5926672/where-does-npm-install-packages)
 
 #### Installation
 `npm install -g houndtrack`
@@ -224,6 +224,7 @@ Returns link to campaign with given `query` parameters .
 |`referrer`| false | String| The referrer for analytics, ex: `facebook`, `linkedin`|
 |`source`| false | String| The source for your campaign analytics|
 |`medium`| false | String| The medium for your campaign analytics|
+|`shorten`| false | String | In the future you would input the shortener to use. Right now only Bitly is supported. This will return both long url and bitly url|
 |`extra`| false | String| Some extra information you would like to add|
 |`redir_fallback`| false | String| An redirection fallback url in case all fails|
 
